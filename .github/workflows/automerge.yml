@@ -12,6 +12,15 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
+      # DEBUG: show PR number and repository to confirm event payload
+      - name: Debug PR context
+        run: |
+          echo "GITHUB_REPOSITORY=${{ github.repository }}"
+          echo "EVENT_NAME=${{ github.event_name }}"
+          # This will be empty if the event payload doesn't include pull_request
+          echo "PULL_REQUEST_NUMBER=${{ github.event.pull_request.number }}"
+
+      # The action expects repository + pull-request-number — pass them explicitly
       - name: Enable auto-merge for PR
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
