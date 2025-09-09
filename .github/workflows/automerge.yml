@@ -1,10 +1,8 @@
 name: Auto Merge Pull Requests
 
 on:
-  # Listen to PR events
   pull_request:
     types: [opened, reopened, synchronize, labeled]
-  # Add manual dispatch for testing
   workflow_dispatch:
 
 permissions:
@@ -15,18 +13,20 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug PR context (show what's available)
+      # Debug: only run when there actually is a pull_request in the event payload
+      - name: Debug PR context (safe)
+        if: ${{ github.event.pull_request != null }}
         run: |
           echo "GITHUB_REPOSITORY=${{ github.repository }}"
           echo "EVENT_NAME=${{ github.event_name }}"
-          # Print the whole event.pull_request object (if present)
-          echo "EVENT_PULL_REQUEST_RAW:"
-          echo "${{ toJson(github.event.pull_request) }}"
           echo "PULL_REQUEST_NUMBER=${{ github.event.pull_request.number }}"
+          # Safely write the entire pull_request JSON into a file and print first 200 lines
+          printf '%s\n' "${{ toJson(github.event.pull_request) }}" > pr_payload.json || true
+          sed -n '1,200p' pr_payload.json || true
 
-      # Only run the enable-auto-merge action if pull_request object is present
-      - name: Enable auto-merge for PR (only if PR present)
-        if: ${{ always() && github.event.pull_request != null }}
+      # If there is no pull_request object (e.g., manual dispatch), skip the enable step.
+      - name: Enable auto-merge for PR
+        if: ${{ github.event.pull_request != null }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +34,7 @@ jobs:
           pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
 
-      - name: Log result
+      # Helpful message when no PR present (won't run for PR events)
+      - name: No PR present
         if: ${{ github.event.pull_request == null }}
-        run: |
-          echo "No pull_request found in the event payload. The action was NOT run."
+        run: echo "No pull_request found in the event payload; nothing to do."
