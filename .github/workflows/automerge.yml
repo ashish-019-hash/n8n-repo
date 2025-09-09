@@ -1,8 +1,11 @@
 name: Auto Merge Pull Requests
 
 on:
+  # Listen to PR events
   pull_request:
     types: [opened, reopened, synchronize, labeled]
+  # Add manual dispatch for testing
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
@@ -12,16 +15,26 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
-      # Must checkout the repo so gh/git commands can run
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          # fetch enough history/refs that gh can detect branches
-          fetch-depth: 0
+      - name: Debug PR context (show what's available)
+        run: |
+          echo "GITHUB_REPOSITORY=${{ github.repository }}"
+          echo "EVENT_NAME=${{ github.event_name }}"
+          # Print the whole event.pull_request object (if present)
+          echo "EVENT_PULL_REQUEST_RAW:"
+          echo "${{ toJson(github.event.pull_request) }}"
+          echo "PULL_REQUEST_NUMBER=${{ github.event.pull_request.number }}"
 
-      - name: Enable auto-merge for PR
+      # Only run the enable-auto-merge action if pull_request object is present
+      - name: Enable auto-merge for PR (only if PR present)
+        if: ${{ always() && github.event.pull_request != null }}
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
-          merge-when-labeled: automerge
+
+      - name: Log result
+        if: ${{ github.event.pull_request == null }}
+        run: |
+          echo "No pull_request found in the event payload. The action was NOT run."
