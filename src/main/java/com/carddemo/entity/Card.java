@@ -1,56 +1,124 @@
 package com.carddemo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "cards")
 public class Card {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @NotNull
+    @Size(max = 16)
+    @Column(name = "card_num", length = 16)
+    private String cardNum;
 
-    @Column(name = "card_number")
-    private String cardNumber;
+    @NotNull
+    @Column(name = "card_acct_id")
+    private Long cardAcctId;
 
-    @Column(name = "cvv_code")
-    private String cvvCode;
+    @NotNull
+    @Column(name = "card_cvv_cd")
+    private Integer cardCvvCd;
 
-    @Column(name = "expiration_date")
-    private String expirationDate;
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "card_embossed_name", length = 50)
+    private String cardEmbossedName;
+
+    @Size(max = 10)
+    @Column(name = "card_expiraion_date", length = 10)
+    private String cardExpiraionDate;
+
+    @NotNull
+    @Size(max = 1)
+    @Column(name = "card_active_status", length = 1)
+    private String cardActiveStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_acct_id", insertable = false, updatable = false)
+    private Account account;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CardCrossReference> cardCrossReferences;
 
     public Card() {}
 
-    public Long getId() {
-        return id;
+    public String getCardNum() {
+        return cardNum;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCardNum(String cardNum) {
+        this.cardNum = cardNum;
     }
 
-    public String getCardNumber() {
-        return cardNumber;
+    public Long getCardAcctId() {
+        return cardAcctId;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setCardAcctId(Long cardAcctId) {
+        this.cardAcctId = cardAcctId;
     }
 
-    public String getCvvCode() {
-        return cvvCode;
+    public Integer getCardCvvCd() {
+        return cardCvvCd;
     }
 
-    public void setCvvCode(String cvvCode) {
-        this.cvvCode = cvvCode;
+    public void setCardCvvCd(Integer cardCvvCd) {
+        this.cardCvvCd = cardCvvCd;
     }
 
-    public String getExpirationDate() {
-        return expirationDate;
+    public String getCardEmbossedName() {
+        return cardEmbossedName;
     }
 
-    public void setExpirationDate(String expirationDate) {
-        this.expirationDate = expirationDate;
+    public void setCardEmbossedName(String cardEmbossedName) {
+        this.cardEmbossedName = cardEmbossedName;
+    }
+
+    public String getCardExpiraionDate() {
+        return cardExpiraionDate;
+    }
+
+    public void setCardExpiraionDate(String cardExpiraionDate) {
+        this.cardExpiraionDate = cardExpiraionDate;
+    }
+
+    public String getCardActiveStatus() {
+        return cardActiveStatus;
+    }
+
+    public void setCardActiveStatus(String cardActiveStatus) {
+        this.cardActiveStatus = cardActiveStatus;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public List<CardCrossReference> getCardCrossReferences() {
+        return cardCrossReferences;
+    }
+
+    public void setCardCrossReferences(List<CardCrossReference> cardCrossReferences) {
+        this.cardCrossReferences = cardCrossReferences;
     }
 
 }
