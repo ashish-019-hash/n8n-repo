@@ -12,16 +12,10 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     steps:
-      # Must checkout the repo so gh/git commands can run
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          # fetch enough history/refs that gh can detect branches
-          fetch-depth: 0
-
       - name: Enable auto-merge for PR
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash
-          merge-when-labeled: automerge
