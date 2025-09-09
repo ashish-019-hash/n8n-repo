@@ -1,56 +1,79 @@
 package com.carddemo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @NotNull
+    @Size(max = 8)
+    @Column(name = "sec_usr_id", length = 8)
+    private String secUsrId;
 
-    @Column(name = "username")
-    private String username;
+    @NotNull
+    @Size(max = 20)
+    @Column(name = "sec_usr_fname", length = 20)
+    private String secUsrFname;
 
-    @Column(name = "password")
-    private String password;
+    @NotNull
+    @Size(max = 20)
+    @Column(name = "sec_usr_lname", length = 20)
+    private String secUsrLname;
 
-    @Column(name = "user_type")
-    private String userType;
+    @NotNull
+    @Size(max = 8)
+    @Column(name = "sec_usr_pwd", length = 8)
+    private String secUsrPwd;
+
+    @NotNull
+    @Size(max = 1)
+    @Column(name = "sec_usr_type", length = 1)
+    private String secUsrType;
 
     public User() {}
 
-    public Long getId() {
-        return id;
+    public String getSecUsrId() {
+        return secUsrId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setSecUsrId(String secUsrId) {
+        this.secUsrId = secUsrId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getSecUsrFname() {
+        return secUsrFname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setSecUsrFname(String secUsrFname) {
+        this.secUsrFname = secUsrFname;
     }
 
-    public String getPassword() {
-        return password;
+    public String getSecUsrLname() {
+        return secUsrLname;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSecUsrLname(String secUsrLname) {
+        this.secUsrLname = secUsrLname;
     }
 
-    public String getUserType() {
-        return userType;
+    public String getSecUsrPwd() {
+        return secUsrPwd;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setSecUsrPwd(String secUsrPwd) {
+        this.secUsrPwd = secUsrPwd;
+    }
+
+    public String getSecUsrType() {
+        return secUsrType;
+    }
+
+    public void setSecUsrType(String secUsrType) {
+        this.secUsrType = secUsrType;
     }
 
 }
